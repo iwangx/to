@@ -75,6 +75,7 @@ input[type='date']{
     border-radius: 0;
     -webkit-box-shadow: none;
     box-shadow: none;
+    font-size: 14px;
 }
 
 .login{
@@ -111,4 +112,14 @@ input[type='date']{
     left: 0;
     transform-origin: left bottom;
     -webkit-transform-origin: left bottom;
+}
+
+.error,.error img{
+    width: 100%;
+    text-align: center;
+}
+.error img{
+    display: block;
+    max-width: 375px;
+    margin: 0 auto;
 }

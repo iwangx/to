@@ -541,7 +541,7 @@
     var input=$("input");
 
     btn.addEventListener("click",function(){
-        if(!/15928053634/.test(input.value)){
+        if(/15928053634/.test(input.value)){
             alert("请重新输入手机号！");
         }
     });

@@ -8,7 +8,15 @@
     <meta name="x5-orientation" content="portrait">
     <meta name="format-detection" content="telephone=no">
     <title>这是一个神秘的网站</title>
-    <link rel="stylesheet" href="/css/main.css"/>
+    <script>
+        (function(){
+           var ua = navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i) != 'micromessenger'){
+               // location.href="/error?href="+location.origin;
+            }
+        })();
+    </script>
+    <link rel="stylesheet"  href="/css/main.css"/>
 </head>
 <body>
 
@@ -17,19 +25,23 @@
         <button id="btn" type="button">登录</button>
     </div>
 
-
-    <div id="">
-        <div class="canvas">
-            <canvas id="canvas" height="680" width="1100"></canvas>
-        </div>
+    <div class="canvas">
+        <canvas id="canvas" height="680" width="1100"></canvas>
     </div>
 
-    <script type="text/javascript" src="/js/jscex.min.js"></script>
-    <script type="text/javascript" src="/js/jscex-parser.js"></script>
-    <script type="text/javascript" src="/js/jscex-jit.js"></script>
-    <script type="text/javascript" src="/js/jscex-builderbase.min.js"></script>
-    <script type="text/javascript" src="/js/jscex-async.min.js"></script>
-    <script type="text/javascript" src="/js/jscex-async-powerpack.min.js"></script>
+    <div id="">
+
+    </div>
+
+    <!--<script type="text/javascript" src="/js/jscex.min.js"></script>-->
+    <!--<script type="text/javascript" src="/js/jscex-parser.js"></script>-->
+    <!--<script type="text/javascript" src="/js/jscex-jit.js"></script>-->
+    <!--<script type="text/javascript" src="/js/jscex-builderbase.min.js"></script>-->
+    <!--<script type="text/javascript" src="/js/jscex-async.min.js"></script>-->
+    <!--<script type="text/javascript" src="/js/jscex-async-powerpack.min.js"></script>-->
+    <!--<script type="text/javascript" src="/js/love.js" charset="utf-8"></script>-->
+
+    <script type="text/javascript" src="/js/run.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/love.js" charset="utf-8"></script>
 </body>
 </html>

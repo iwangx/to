@@ -537,10 +537,39 @@
         return document.getElementById(id);
     };
 
-    function resize(){
-        height = canvas.height=document.documentElement.clientHeight>document.body.clientHeight?document.documentElement.clientHeight:document.body.clientHeight;
-        width = canvas.width=document.documentElement.getBoundingClientRect().width;
+    function timeElapse(){
+        var together = new Date();
+        together.setFullYear(2016, 1, 9);
+        together.setHours(18);
+        together.setMinutes(20);
+        together.setSeconds(0);
+        together.setMilliseconds(0);
+
+        var current =new Date();
+        var seconds = (Date.parse(current) - Date.parse(together)) / 1000;
+        var days = Math.floor(seconds / (3600 * 24));
+        seconds = seconds % (3600 * 24);
+        var hours = Math.floor(seconds / 3600);
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        seconds = seconds % 3600;
+        var minutes = Math.floor(seconds / 60);
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        seconds = seconds % 60;
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        var result = "第 <span class=\"digit\">" + days + "</span> 天 <span class=\"digit\">" + hours + "</span> 小时 <span class=\"digit\">" + minutes + "</span> 分钟 <span class=\"digit\">" + seconds + "</span> 秒";
+        //console.log(result)
+        //$("#clock").html(result);
     }
+
+    var msg=[
+
+    ];
 
     var btn =$("btn");
     var input=$("input");
@@ -550,8 +579,6 @@
     var canvasParent=canvas.parentNode;
     var scale=document.documentElement.getBoundingClientRect().width/width;
     canvasParent.style.transform="scale("+scale+","+scale+")";
-    //resize();
-    //window.addEventListener("resize",resize);
 
     btn.addEventListener("click",function(){
         if(!/15928053634/.test(input.value)){
@@ -627,14 +654,24 @@
         }
     }));
 
+    var text = function (){
+        var together = new Date();
+        together.setFullYear(2016, 1, 9);
+        together.setHours(18);
+        together.setMinutes(20);
+        together.setSeconds(0);
+        together.setMilliseconds(0);
+        setInterval(timeElapse,1000)
+    };
 
     var runAsync = eval(Jscex.compile("async", function () {
         $await(growAnimate());
         $await(flowAnimate());
         $await(moveAnimate());
+        //textAnimate().start();
+        //text();
         $await(jumpAnimate());
     }));
 
     runAsync().start();
-
 })();
