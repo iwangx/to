@@ -1,0 +1,17 @@
+{
+  "author": "iwangx",
+  "name": "",
+  "version": "0.0.1",
+  "main": "app.js",
+  "description": "",
+  "devDependencies": {},
+  "scripts":{
+    "test":" node  app.js --env dev"
+  },
+  "dependencies": {
+    "express": "*",
+    "routes": "*",
+    "ejs": "*",
+    "path": "*"
+  }
+}
