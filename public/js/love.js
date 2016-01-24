@@ -549,7 +549,7 @@
     var height = canvas.height;
     var canvasParent=canvas.parentNode;
     var scale=document.documentElement.getBoundingClientRect().width/width;
-    canvasParent.style.transform="scale("+scale+","+scale+")"
+    canvasParent.style.transform="scale("+scale+","+scale+")";
     //resize();
     //window.addEventListener("resize",resize);
 
@@ -586,13 +586,11 @@
         bloom: {
             num: 666,
             width: 1100,
-            height: 680,
+            height: 680
         }
     };
 
     var tree = new Tree(canvas, width, height, opts);
-    var seed = tree.seed;
-    var foot = tree.footer;
 
     var growAnimate = eval(Jscex.compile("async", function () {
         do {
@@ -611,18 +609,12 @@
     var moveAnimate = eval(Jscex.compile("async", function () {
         tree.snapshot("p1", 240, 0, 610, 680);
         while (tree.move("p1", 500, 0)) {
-            foot.draw();
             $await(Jscex.Async.sleep(10));
         }
-        foot.draw();
-        tree.snapshot("p2", 500, 0, 610, 680);
 
         // 会有闪烁不得意这样做, (＞﹏＜)
-        //canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
         canvas.parentNode.style.background='url('+ tree.toDataURL('image/png') + ')';
-        //canvas.style.background="#fff";
         $await(Jscex.Async.sleep(300));
-        //canvas.style.background="none";
     }));
 
     var jumpAnimate = eval(Jscex.compile("async", function () {
@@ -637,13 +629,9 @@
 
 
     var runAsync = eval(Jscex.compile("async", function () {
-        //$await(seedAnimate());
         $await(growAnimate());
         $await(flowAnimate());
         $await(moveAnimate());
-
-        //textAnimate().start();
-
         $await(jumpAnimate());
     }));
 
