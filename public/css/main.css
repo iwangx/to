@@ -123,3 +123,17 @@ input[type='date']{
     max-width: 375px;
     margin: 0 auto;
 }
+
+.countdown{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+.count-day{
+    color: #44cb83;
+    font-size: 30px;
+}
+.we{
+    font-size: 30px;
+}

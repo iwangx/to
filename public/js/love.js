@@ -537,16 +537,15 @@
         return document.getElementById(id);
     };
 
-    function timeElapse(){
-        var together = new Date();
-        together.setFullYear(2016, 1, 9);
-        together.setHours(18);
-        together.setMinutes(20);
-        together.setSeconds(0);
-        together.setMilliseconds(0);
+    var countdown =$("countdown");
+    var day=$("day");
+    var hour=$('hours');
+    var minute=$("minutes");
+    var second=$("seconds");
 
+    function timeElapse(data){
         var current =new Date();
-        var seconds = (Date.parse(current) - Date.parse(together)) / 1000;
+        var seconds = (Date.parse(current) - Date.parse(data)) / 1000;
         var days = Math.floor(seconds / (3600 * 24));
         seconds = seconds % (3600 * 24);
         var hours = Math.floor(seconds / 3600);
@@ -562,7 +561,13 @@
         if (seconds < 10) {
             seconds = "0" + seconds;
         }
-        var result = "第 <span class=\"digit\">" + days + "</span> 天 <span class=\"digit\">" + hours + "</span> 小时 <span class=\"digit\">" + minutes + "</span> 分钟 <span class=\"digit\">" + seconds + "</span> 秒";
+       // var result = "第 <span class=\"digit\">" + days + "</span> 天 <span class=\"digit\">" + hours + "</span> 小时 <span class=\"digit\">" + minutes + "</span> 分钟 <span class=\"digit\">" + seconds + "</span> 秒";
+        day.innerHTML=days;
+        hour.innerHTML=hours;
+        minute.innerHTML=minutes;
+        second.innerHTML=seconds;
+
+        //countdown.innerHTML=result;
         //console.log(result)
         //$("#clock").html(result);
     }
@@ -654,22 +659,25 @@
         }
     }));
 
-    var text = function (){
+    var textAnimate = eval(Jscex.compile("async", function () {
         var together = new Date();
-        together.setFullYear(2016, 1, 9);
-        together.setHours(18);
+        together.setFullYear(2016, 0, 9);
+        together.setHours(20);
         together.setMinutes(20);
         together.setSeconds(0);
         together.setMilliseconds(0);
-        setInterval(timeElapse,1000)
-    };
+
+        while (true) {
+            timeElapse(together);
+            $await(Jscex.Async.sleep(1000));
+        }
+    }));
 
     var runAsync = eval(Jscex.compile("async", function () {
         $await(growAnimate());
         $await(flowAnimate());
         $await(moveAnimate());
-        //textAnimate().start();
-        //text();
+        textAnimate().start();
         $await(jumpAnimate());
     }));
 
