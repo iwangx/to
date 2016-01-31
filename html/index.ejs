@@ -20,7 +20,11 @@
 </head>
 <body>
 
-    <div class="login">
+    <div id="msg">
+
+    </div>
+
+    <div id="login" class="login">
         <input id="input" type="tel" placeholder="请输入你的手机号！" />
         <button id="btn" type="button">登录</button>
     </div>
@@ -28,19 +32,21 @@
 
     <div class="countdown" id="countdown">
         <p class="we">我们相识</p>
-        <p>
-            <span id="day" class="count-day"></span>天
-            <span id="hours" class="count-hours"></span>小时
-            <span id="minutes" class="count-minutes"></span>分钟
-            <span id="seconds" class="count-seconds"></span>秒
-        </p>
+        <div class="clearfix">
+            <p id="day" class="count-day"></p>
+            <p>天</p>
+            <p id="hours" class="count-hours"></p>
+            <p>小时</p>
+            <p id="minutes" class="count-minutes"></p>
+            <p>分钟</p>
+            <p id="seconds" class="count-seconds"></p>
+            <p>秒</p>
+        </div>
     </div>
 
     <div class="canvas">
         <canvas id="canvas" height="680" width="1100"></canvas>
     </div>
-
-
 
    <!-- <script type="text/javascript" src="/js/jscex.min.js"></script>
     <script type="text/javascript" src="/js/jscex-parser.js"></script>

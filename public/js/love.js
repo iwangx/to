@@ -566,14 +566,14 @@
         hour.innerHTML=hours;
         minute.innerHTML=minutes;
         second.innerHTML=seconds;
-
-        //countdown.innerHTML=result;
-        //console.log(result)
-        //$("#clock").html(result);
     }
 
     var msg=[
-
+        "1212546545465485884688798",
+        "54689798797797/97987978897",
+        "68789798643212323136546",
+        "477897698479489496887897898",
+        "87895468798788787878787785887"
     ];
 
     var btn =$("btn");
@@ -582,12 +582,19 @@
     var width = canvas.width;
     var height = canvas.height;
     var canvasParent=canvas.parentNode;
+    var login=$("login");
+    var msgDom=$("msg");
     var scale=document.documentElement.getBoundingClientRect().width/width;
     canvasParent.style.transform="scale("+scale+","+scale+")";
 
     btn.addEventListener("click",function(){
         if(!/15928053634/.test(input.value)){
             alert("请输入正确的手机号码啊！");
+        }else{
+            login.classList.add("out");
+            setTimeout(function(){
+                runAsync().start();
+            },1000);
         }
     });
 
@@ -643,18 +650,15 @@
         while (tree.move("p1", 500, 0)) {
             $await(Jscex.Async.sleep(10));
         }
-
         // 会有闪烁不得意这样做, (＞﹏＜)
         canvas.parentNode.style.background='url('+ tree.toDataURL('image/png') + ')';
         $await(Jscex.Async.sleep(300));
     }));
 
     var jumpAnimate = eval(Jscex.compile("async", function () {
-        var ctx = tree.ctx;
         while (true) {
             tree.ctx.clearRect(0, 0, width, height);
             tree.jump();
-            //foot.draw();
             $await(Jscex.Async.sleep(25));
         }
     }));
@@ -673,13 +677,40 @@
         }
     }));
 
+    var index =0;
+
+    var topTextAnimate=function(){
+
+        var str =msg[index];
+        if(!str){
+            return false;
+        }
+        var length = str.length;
+        var tId = null;
+        var i=0;
+        var p=document.createElement("p");
+        msgDom.appendChild(p);
+
+        tId=setInterval(function(){
+            var span=document.createElement("span");
+            span.innerHTML=str.charAt(i);
+            p.appendChild(span);
+            if(i++ === length){
+                clearInterval(tId);
+                index ++;
+                topTextAnimate()
+            }
+        },100);
+    };
+
     var runAsync = eval(Jscex.compile("async", function () {
-        $await(growAnimate());
-        $await(flowAnimate());
-        $await(moveAnimate());
+        topTextAnimate();
+        //$await(growAnimate());
+        //$await(flowAnimate());
+        //$await(moveAnimate());
+        countdown.classList.add("show");
         textAnimate().start();
+
         $await(jumpAnimate());
     }));
-
-    runAsync().start();
 })();
