@@ -174,3 +174,12 @@ input[type='date']{
 .we{
     font-size: 30px;
 }
+
+.msg{
+    padding: 10px;
+    font-size: 15px;
+}
+
+.msg p{
+    margin-bottom: 10px;
+}

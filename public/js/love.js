@@ -561,7 +561,6 @@
         if (seconds < 10) {
             seconds = "0" + seconds;
         }
-       // var result = "第 <span class=\"digit\">" + days + "</span> 天 <span class=\"digit\">" + hours + "</span> 小时 <span class=\"digit\">" + minutes + "</span> 分钟 <span class=\"digit\">" + seconds + "</span> 秒";
         day.innerHTML=days;
         hour.innerHTML=hours;
         minute.innerHTML=minutes;
@@ -569,11 +568,19 @@
     }
 
     var msg=[
-        "1212546545465485884688798",
-        "54689798797797/97987978897",
-        "68789798643212323136546",
-        "477897698479489496887897898",
-        "87895468798788787878787785887"
+        "潇潇:",
+        "认识你是我最大的幸运",
+        "你是一个可爱,温柔,甜美,傻傻的女孩",
+        "每次看到你都很心动",
+        "每次知道你加班我也会很心疼",
+        "不要加那么多班了好吗",
+        "工作永远都做不完,我只希望你健康快乐",
+        "记得我们去三圣乡摘梅花",
+        "每一刻每一秒都像电影胶片在我脑海浮现",
+        "这是我们仅有的美好,希望美好越来越多",
+        "我怕你会不理我",
+        "我怕一段良缘就此错过",
+        ""
     ];
 
     var btn =$("btn");
@@ -588,7 +595,7 @@
     canvasParent.style.transform="scale("+scale+","+scale+")";
 
     btn.addEventListener("click",function(){
-        if(!/15928053634/.test(input.value)){
+        if(!/123/.test(input.value)){
             alert("请输入正确的手机号码啊！");
         }else{
             login.classList.add("out");
@@ -698,19 +705,19 @@
             if(i++ === length){
                 clearInterval(tId);
                 index ++;
-                topTextAnimate()
+                setTimeout(topTextAnimate,300);
+                //topTextAnimate()
             }
-        },100);
+        },150);
     };
 
     var runAsync = eval(Jscex.compile("async", function () {
-        topTextAnimate();
-        //$await(growAnimate());
-        //$await(flowAnimate());
-        //$await(moveAnimate());
+        $await(growAnimate());
+        $await(flowAnimate());
+        $await(moveAnimate());
         countdown.classList.add("show");
         textAnimate().start();
-
+        topTextAnimate();
         $await(jumpAnimate());
     }));
 })();
