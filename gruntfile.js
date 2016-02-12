@@ -21,20 +21,10 @@ module.exports = function(grunt) {
             }
         },
         uglify:{
-            prod:{
-                options: {
-                    banner: '/*!\n * <%= pkg.name %> - compressed JS\n * @licence <%= pkg.name %> - v<%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>)\n * http://blog.csdn.net/jennieji | Licence: MIT\n */\n'
-                },
-                files: {
-                    'dist/js/run.js': [
-                        jsSrc +'jscex.min.js',
-                        jsSrc +'jscex-parser.js',
-                        jsSrc +'jscex-jit.js',
-                        jsSrc +'jscex-builderbase.min.js',
-                        jsSrc +'jscex-async.min.js',
-                        jsSrc +'jscex-async-powerpack.min.js',
-                        jsSrc +'love.js'
-                    ]
+            dist:{
+                files:{
+                    "dist/js/run.js":["public/js/run.js"],
+                    "dist/js/love.js":["public/js/love.js"]
                 }
             }
         },
@@ -52,5 +42,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.registerTask('default',['concat:dev','cssmin']);
-    grunt.registerTask('uglify',['uglify'])
+    grunt.registerTask('uglify1',['uglify'])
 };

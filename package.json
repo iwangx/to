@@ -6,7 +6,8 @@
   "description": "",
   "devDependencies": {},
   "scripts":{
-    "test":" node  app.js --env dev"
+    "test":" node  app.js --env dev",
+    "public":" node  app.js --env public"
   },
   "dependencies": {
     "express": "*",

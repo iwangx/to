@@ -587,8 +587,10 @@
         "我也不希望给你太多压力",
         "我怕你会不理我",
         "我怕一段良缘就此错过",
-        "总之一句话",
-        "我喜欢你"
+        "我喜欢你",
+        "在这峥嵘的岁月你",
+        "我喜欢你",
+        "那个温柔善良的你"
     ];
 
     var btn =$("btn");
@@ -603,7 +605,7 @@
     canvasParent.style.transform="scale("+scale+","+scale+")";
 
     btn.addEventListener("click",function(){
-        if(!/123/.test(input.value)){
+        if(!/15884514853/.test(input.value)){
             alert("请输入正确的手机号码啊！");
         }else{
             login.classList.add("out");
