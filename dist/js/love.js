@@ -1,1 +1,733 @@
-!function(a){function b(a,b){return a+Math.floor(Math.random()*(b-a+1))}function c(a,b){var c=a[0].mul((1-b)*(1-b)),d=a[1].mul(2*b*(1-b)),e=a[2].mul(b*b);return c.add(d).add(e)}function d(a,b,c){var d=(a/c*(a/c)+b/c*(b/c)-1)*(a/c*(a/c)+b/c*(b/c)-1)*(a/c*(a/c)+b/c*(b/c)-1)-a/c*(a/c)*(b/c)*(b/c)*(b/c);return 0>d}Point=function(a,b){this.x=a||0,this.y=b||0},Point.prototype={clone:function(){return new Point(this.x,this.y)},add:function(a){return p=this.clone(),p.x+=a.x,p.y+=a.y,p},sub:function(a){return p=this.clone(),p.x-=a.x,p.y-=a.y,p},div:function(a){return p=this.clone(),p.x/=a,p.y/=a,p},mul:function(a){return p=this.clone(),p.x*=a,p.y*=a,p}},Heart=function(){for(var a,b,c,d=[],e=10;30>e;e+=.2)c=e/Math.PI,a=16*Math.pow(Math.sin(c),3),b=13*Math.cos(c)-5*Math.cos(2*c)-2*Math.cos(3*c)-Math.cos(4*c),d.push(new Point(a,b));this.points=d,this.length=d.length},Heart.prototype={get:function(a,b){return this.points[a].mul(b||1)}},Seed=function(a,b,c,d){this.tree=a;var c=c||1,d=d||"#FF0000";this.heart={point:b,scale:c,color:d,figure:new Heart},this.cirle={point:b,scale:c,color:d,radius:5}},Seed.prototype={draw:function(){this.drawHeart(),this.drawText()},addPosition:function(a,b){this.cirle.point=this.cirle.point.add(new Point(a,b))},canMove:function(){return this.cirle.point.y<this.tree.height+20},move:function(a,b){this.clear(),this.drawCirle(),this.addPosition(a,b)},canScale:function(){return this.heart.scale>.2},setHeartScale:function(a){this.heart.scale*=a},scale:function(a){this.clear(),this.drawCirle(),this.drawHeart(),this.setHeartScale(a)},drawHeart:function(){var a=this.tree.ctx,b=this.heart,c=b.point,d=b.color,e=b.scale;a.save(),a.fillStyle=d,a.translate(c.x,c.y),a.beginPath(),a.moveTo(0,0);for(var f=0;f<b.figure.length;f++){var g=b.figure.get(f,e);a.lineTo(g.x,-g.y)}a.closePath(),a.fill(),a.restore()},drawCirle:function(){var a=this.tree.ctx,b=this.cirle,c=b.point,d=b.color,e=b.scale,f=b.radius;a.save(),a.fillStyle=d,a.translate(c.x,c.y),a.scale(e,e),a.beginPath(),a.moveTo(0,0),a.arc(0,0,f,0,2*Math.PI),a.closePath(),a.fill(),a.restore()},drawText:function(){var a=this.tree.ctx,b=this.heart,c=b.point,d=b.color,e=b.scale;a.save(),a.strokeStyle=d,a.fillStyle=d,a.translate(c.x,c.y),a.scale(e,e),a.moveTo(0,0),a.lineTo(15,15),a.lineTo(60,15),a.stroke(),a.moveTo(0,0),a.scale(.75,.75),a.font="12px 微软雅黑,Verdana",a.fillText("click here",23,16),a.restore()},clear:function(){var a=this.tree.ctx,b=this.cirle,c=b.point,d=b.scale,e=26,f=h=e*d;a.clearRect(c.x-f,c.y-h,4*f,4*h)},hover:function(a,b){var c=this.tree.ctx,d=c.getImageData(a,b,1,1);return 255==d.data[3]}},Footer=function(a,b,c,d){this.tree=a,this.point=new Point(a.seed.heart.point.x,a.height-c/2),this.width=b,this.height=c,this.speed=d||2,this.length=0},Footer.prototype={draw:function(){var a=this.tree.ctx,b=this.point,c=this.length/2;a.save(),a.strokeStyle="rgb(35, 31, 32)",a.lineWidth=this.height,a.lineCap="round",a.lineJoin="round",a.translate(b.x,b.y),a.beginPath(),a.moveTo(0,0),a.lineTo(c,0),a.lineTo(-c,0),a.stroke(),a.restore(),this.length<this.width&&(this.length+=this.speed)}},Tree=function(a,b,c,d){this.canvas=a,this.ctx=a.getContext("2d"),this.width=b,this.height=c,this.opt=d||{},this.record={},this.initSeed(),this.initFooter(),this.initBranch(),this.initBloom()},Tree.prototype={initSeed:function(){var a=this.opt.seed||{},b=a.x||this.width/2,c=a.y||this.height/2,d=new Point(b,c),e=a.color||"#FF0000",f=a.scale||1;this.seed=new Seed(this,d,f,e)},initFooter:function(){var a=this.opt.footer||{},b=a.width||this.width,c=a.height||5,d=a.speed||2;this.footer=new Footer(this,b,c,d)},initBranch:function(){var a=this.opt.branch||[];this.branchs=[],this.addBranchs(a)},initBloom:function(){for(var a=this.opt.bloom||{},b=[],c=a.num||500,d=a.width||this.width,e=a.height||this.height,f=this.seed.heart.figure,g=240,h=0;c>h;h++)b.push(this.createBloom(d,e,g,f));this.blooms=[],this.bloomsCache=b},toDataURL:function(a){return this.canvas.toDataURL(a)},draw:function(a){var b=this,c=b.ctx,d=b.record[a];if(d){var e=d.point,f=d.image;c.save(),c.putImageData(f,e.x,e.y),c.restore()}},addBranch:function(a){this.branchs.push(a)},addBranchs:function(a){for(var b,c,d,e,f,g,h,i=this,j=0;j<a.length;j++)b=a[j],c=new Point(b[0],b[1]),d=new Point(b[2],b[3]),e=new Point(b[4],b[5]),f=b[6],g=b[7],h=b[8],i.addBranch(new Branch(i,c,d,e,f,g,h))},removeBranch:function(a){for(var b=this.branchs,c=0;c<b.length;c++)b[c]===a&&b.splice(c,1)},canGrow:function(){return!!this.branchs.length},grow:function(){for(var a=this.branchs,b=0;b<a.length;b++){var c=a[b];c&&c.grow()}},addBloom:function(a){this.blooms.push(a)},removeBloom:function(a){for(var b=this.blooms,c=0;c<b.length;c++)b[c]===a&&b.splice(c,1)},createBloom:function(a,c,e,f,g,h,i,j,k,l){for(var m,n;;)if(m=b(20,a-20),n=b(20,c-20),d(m-a/2,c-(c-40)/2-n,e))return new Bloom(this,new Point(m,n),f,g,h,i,j,k,l)},canFlower:function(){return!!this.blooms.length},flower:function(a){for(var b=this,c=b.bloomsCache.splice(0,a),d=0;d<c.length;d++)b.addBloom(c[d]);c=b.blooms;for(var e=0;e<c.length;e++)c[e].flower()},snapshot:function(a,b,c,d,e){var f=this.ctx,g=f.getImageData(b,c,d,e);this.record[a]={image:g,point:new Point(b,c),width:d,height:e}},setSpeed:function(a,b){this.record[a||"move"].speed=b},move:function(a,b,c){var d=this,e=d.ctx,f=d.record[a||"move"],g=f.point,h=f.image,k=f.speed||10,l=f.width,m=f.height;return i=g.x+k<b?g.x+k:b,j=g.y+k<c?g.y+k:c,e.save(),e.clearRect(g.x,g.y,l,m),e.putImageData(h,i,j),e.restore(),f.point=new Point(i,j),f.speed=.95*k,f.speed<2&&(f.speed=2),i<b||j<c},jump:function(){var a=this,c=a.blooms;if(c.length)for(var d=0;d<c.length;d++)c[d].jump();if(c.length&&c.length<3||!c.length)for(var e=this.opt.bloom||{},f=e.width||this.width,g=e.height||this.height,h=this.seed.heart.figure,i=240,d=0;d<b(1,2);d++)c.push(this.createBloom(f/2+f,g,i,h,null,1,null,1,new Point(b(-100,600),720),b(200,300)))}},Branch=function(a,b,c,d,e,f,g){this.tree=a,this.point1=b,this.point2=c,this.point3=d,this.radius=e,this.length=f||100,this.len=0,this.t=1/(this.length-1),this.branchs=g||[]},Branch.prototype={grow:function(){var a,b=this;b.len<=b.length?(a=c([b.point1,b.point2,b.point3],b.len*b.t),b.draw(a),b.len+=1,b.radius*=.97):(b.tree.removeBranch(b),b.tree.addBranchs(b.branchs))},draw:function(a){var b=this,c=b.tree.ctx;c.save(),c.beginPath(),c.fillStyle="rgb(35, 31, 32)",c.shadowColor="rgb(35, 31, 32)",c.shadowBlur=2,c.moveTo(a.x,a.y),c.arc(a.x,a.y,b.radius,0,2*Math.PI),c.closePath(),c.fill(),c.restore()}},Bloom=function(a,c,d,e,f,g,h,i,j){this.tree=a,this.point=c,this.color=e||"rgb(255,"+b(0,255)+","+b(0,255)+")",this.alpha=f||b(.3,1),this.angle=g||b(0,360),this.scale=h||.1,this.place=i,this.speed=j,this.figure=d},Bloom.prototype={setFigure:function(a){this.figure=a},flower:function(){var a=this;a.draw(),a.scale+=.1,a.scale>1&&a.tree.removeBloom(a)},draw:function(){var a=this,b=a.tree.ctx,c=a.figure;b.save(),b.fillStyle=a.color,b.globalAlpha=a.alpha,b.translate(a.point.x,a.point.y),b.scale(a.scale,a.scale),b.rotate(a.angle),b.beginPath(),b.moveTo(0,0);for(var d=0;d<c.length;d++){var e=c.get(d);b.lineTo(e.x,-e.y)}b.closePath(),b.fill(),b.restore()},jump:function(){var a=this,b=a.tree.height;a.point.x<-20||a.point.y>b+20?a.tree.removeBloom(a):(a.draw(),a.point=a.place.sub(a.point).div(a.speed).add(a.point),a.angle+=.05,a.speed-=1)}},a.random=b,a.bezier=c,a.Point=Point,a.Tree=Tree}(window),function(){function timeElapse(a){var b=new Date,c=(Date.parse(b)-Date.parse(a))/1e3,d=Math.floor(c/86400);c%=86400;var e=Math.floor(c/3600);10>e&&(e="0"+e),c%=3600;var f=Math.floor(c/60);10>f&&(f="0"+f),c%=60,10>c&&(c="0"+c),day.innerHTML=d,hour.innerHTML=e,minute.innerHTML=f,second.innerHTML=c}var $=function(a){return document.getElementById(a)},countdown=$("countdown"),day=$("day"),hour=$("hours"),minute=$("minutes"),second=$("seconds"),msg=["潇潇:","今天是个特殊的日子","我要向你说出内心里的话","认识你是我最大的幸运","你是一个可爱,温柔,甜美,傻傻的女孩","每次看到你都很心动","每次知道你加班我也会很心疼","不要加那么多班了好吗","工作永远都做不完,我只希望你健康快乐","记得我们去三圣乡摘梅花","每一刻每一秒都像电影胶片在我脑海浮现","这是我们仅有的美好,希望美好越来越多","我有时候做事可能让你很尴尬,以后我会尊重你的感受","不去你们公司楼下接你","不过我真的希望能多见见你","希望以后的我们能够多了解,多熟悉","我也不希望给你太多压力","我怕你会不理我","我怕一段良缘就此错过","我喜欢你","在这峥嵘的岁月你","我喜欢你","那个温柔善良的你"],btn=$("btn"),input=$("input"),canvas=$("canvas"),width=canvas.width,height=canvas.height,canvasParent=canvas.parentNode,login=$("login"),msgDom=$("msg"),scale=document.documentElement.getBoundingClientRect().width/width;canvasParent.style.transform="scale("+scale+","+scale+")";var opts={seed:{x:width/2-20,color:"rgb(190, 26, 37)",scale:1},branch:[[535,680,570,250,500,200,30,100,[[540,500,455,417,340,400,13,100,[[450,435,434,430,394,395,2,40]]],[550,445,600,356,680,345,12,100,[[578,400,648,409,661,426,3,80]]],[539,281,537,248,534,217,3,40],[546,397,413,247,328,244,9,80,[[427,286,383,253,371,205,2,40],[498,345,435,315,395,330,4,60]]],[546,357,608,252,678,221,6,100,[[590,293,646,277,648,271,2,80]]]]]],bloom:{num:666,width:1100,height:680}},tree=new Tree(canvas,width,height,opts),growAnimate=eval(Jscex.compile("async",function(){do tree.grow(),$await(Jscex.Async.sleep(10));while(tree.canGrow())})),flowAnimate=eval(Jscex.compile("async",function(){do tree.flower(2),$await(Jscex.Async.sleep(10));while(tree.canFlower())})),moveAnimate=eval(Jscex.compile("async",function(){for(tree.snapshot("p1",240,0,610,680);tree.move("p1",500,0);)$await(Jscex.Async.sleep(10));canvas.parentNode.style.background="url("+tree.toDataURL("image/png")+")",$await(Jscex.Async.sleep(300))})),jumpAnimate=eval(Jscex.compile("async",function(){for(;;)tree.ctx.clearRect(0,0,width,height),tree.jump(),$await(Jscex.Async.sleep(25))})),textAnimate=eval(Jscex.compile("async",function(){var a=new Date;for(a.setFullYear(2016,0,9),a.setHours(20),a.setMinutes(20),a.setSeconds(0),a.setMilliseconds(0);;)timeElapse(a),$await(Jscex.Async.sleep(1e3))})),index=0,topTextAnimate=function(){var a=msg[index];if(!a)return!1;var b=a.length,c=null,d=0,e=document.createElement("p");msgDom.appendChild(e),c=setInterval(function(){var f=document.createElement("span");f.innerHTML=a.charAt(d),e.appendChild(f),d++===b&&(clearInterval(c),index++,setTimeout(topTextAnimate,300))},150)},runAsync=eval(Jscex.compile("async",function(){$await(growAnimate()),$await(flowAnimate()),$await(moveAnimate()),countdown.classList.add("show"),textAnimate().start(),topTextAnimate(),$await(jumpAnimate())}));btn.addEventListener("click",function(){/15884514853/.test(input.value)?(login.classList.add("out"),setTimeout(function(){runAsync().start()},1e3)):alert("请输入正确的手机号码啊！")})}();
+(function(window){
+
+    function random(min, max) {
+        return min + Math.floor(Math.random() * (max - min + 1));
+    }
+
+    function bezier(cp, t) {
+        var p1 = cp[0].mul((1 - t) * (1 - t));
+        var p2 = cp[1].mul(2 * t * (1 - t));
+        var p3 = cp[2].mul(t * t);
+        return p1.add(p2).add(p3);
+    }
+
+    function inheart(x, y, r) {
+        // x^2+(y-(x^2)^(1/3))^2 = 1
+        // http://www.wolframalpha.com/input/?i=x%5E2%2B%28y-%28x%5E2%29%5E%281%2F3%29%29%5E2+%3D+1
+        var z = ((x / r) * (x / r) + (y / r) * (y / r) - 1) * ((x / r) * (x / r) + (y / r) * (y / r) - 1) * ((x / r) * (x / r) + (y / r) * (y / r) - 1) - (x / r) * (x / r) * (y / r) * (y / r) * (y / r);
+        return z < 0;
+    }
+
+    Point = function(x, y) {
+        this.x = x || 0;
+        this.y = y || 0;
+    }
+    Point.prototype = {
+        clone: function() {
+            return new Point(this.x, this.y);
+        },
+        add: function(o) {
+            p = this.clone();
+            p.x += o.x;
+            p.y += o.y;
+            return p;
+        },
+        sub: function(o) {
+            p = this.clone();
+            p.x -= o.x;
+            p.y -= o.y;
+            return p;
+        },
+        div: function(n) {
+            p = this.clone();
+            p.x /= n;
+            p.y /= n;
+            return p;
+        },
+        mul: function(n) {
+            p = this.clone();
+            p.x *= n;
+            p.y *= n;
+            return p;
+        }
+    }
+
+    Heart = function() {
+        // x = 16 sin^3 t
+        // y = 13 cos t - 5 cos 2t - 2 cos 3t - cos 4t
+        // http://www.wolframalpha.com/input/?i=x+%3D+16+sin%5E3+t%2C+y+%3D+(13+cos+t+-+5+cos+2t+-+2+cos+3t+-+cos+4t)
+        var points = [], x, y, t;
+        for (var i = 10; i < 30; i += 0.2) {
+            t = i / Math.PI;
+            x = 16 * Math.pow(Math.sin(t), 3);
+            y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+            points.push(new Point(x, y));
+        }
+        this.points = points;
+        this.length = points.length;
+    }
+    Heart.prototype = {
+        get: function(i, scale) {
+            return this.points[i].mul(scale || 1);
+        }
+    }
+
+    Seed = function(tree, point, scale, color) {
+        this.tree = tree;
+
+        var scale = scale || 1
+        var color = color || '#FF0000';
+
+        this.heart = {
+            point  : point,
+            scale  : scale,
+            color  : color,
+            figure : new Heart(),
+        }
+
+        this.cirle = {
+            point  : point,
+            scale  : scale,
+            color  : color,
+            radius : 5,
+        }
+    }
+    Seed.prototype = {
+        draw: function() {
+            this.drawHeart();
+            this.drawText();
+        },
+        addPosition: function(x, y) {
+            this.cirle.point = this.cirle.point.add(new Point(x, y));
+        },
+        canMove: function() {
+            return this.cirle.point.y < (this.tree.height + 20);
+        },
+        move: function(x, y) {
+            this.clear();
+            this.drawCirle();
+            this.addPosition(x, y);
+        },
+        canScale: function() {
+            return this.heart.scale > 0.2;
+        },
+        setHeartScale: function(scale) {
+            this.heart.scale *= scale;
+        },
+        scale: function(scale) {
+            this.clear();
+            this.drawCirle();
+            this.drawHeart();
+            this.setHeartScale(scale);
+        },
+        drawHeart: function() {
+            var ctx = this.tree.ctx, heart = this.heart;
+            var point = heart.point, color = heart.color,
+                scale = heart.scale;
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.translate(point.x, point.y);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            for (var i = 0; i < heart.figure.length; i++) {
+                var p = heart.figure.get(i, scale);
+                ctx.lineTo(p.x, -p.y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        },
+        drawCirle: function() {
+            var ctx = this.tree.ctx, cirle = this.cirle;
+            var point = cirle.point, color = cirle.color,
+                scale = cirle.scale, radius = cirle.radius;
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.translate(point.x, point.y);
+            ctx.scale(scale, scale);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        },
+        drawText: function() {
+            var ctx = this.tree.ctx, heart = this.heart;
+            var point = heart.point, color = heart.color,
+                scale = heart.scale;
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.translate(point.x, point.y);
+            ctx.scale(scale, scale);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(15, 15);
+            ctx.lineTo(60, 15);
+            ctx.stroke();
+
+            ctx.moveTo(0, 0);
+            ctx.scale(0.75, 0.75);
+            ctx.font = "12px 微软雅黑,Verdana"; // 字号肿么没有用? (ˉ(∞)ˉ)
+            ctx.fillText("click here", 23, 16);
+            ctx.restore();
+        },
+        clear: function() {
+            var ctx = this.tree.ctx, cirle = this.cirle;
+            var point = cirle.point, scale = cirle.scale, radius = 26;
+            var w = h = (radius * scale);
+            ctx.clearRect(point.x - w, point.y - h, 4 * w, 4 * h);
+        },
+        hover: function(x, y) {
+            var ctx = this.tree.ctx;
+            var pixel = ctx.getImageData(x, y, 1, 1);
+            return pixel.data[3] == 255
+        }
+    }
+
+    Footer = function(tree, width, height, speed) {
+        this.tree = tree;
+        this.point = new Point(tree.seed.heart.point.x, tree.height - height / 2);
+        this.width = width;
+        this.height = height;
+        this.speed = speed || 2;
+        this.length = 0;
+    }
+    Footer.prototype = {
+        draw: function() {
+            var ctx = this.tree.ctx, point = this.point;
+            var len = this.length / 2;
+
+            ctx.save();
+            ctx.strokeStyle = 'rgb(35, 31, 32)';
+            ctx.lineWidth = this.height;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.translate(point.x, point.y);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(len, 0);
+            ctx.lineTo(-len, 0);
+            ctx.stroke();
+            ctx.restore();
+
+            if (this.length < this.width) {
+                this.length += this.speed;
+            }
+        }
+    }
+
+    Tree = function(canvas, width, height, opt) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.width = width;
+        this.height = height;
+        this.opt = opt || {};
+
+        this.record = {};
+
+        this.initSeed();
+        this.initFooter();
+        this.initBranch();
+        this.initBloom();
+    }
+    Tree.prototype = {
+        initSeed: function() {
+            var seed = this.opt.seed || {};
+            var x = seed.x || this.width / 2;
+            var y = seed.y || this.height / 2;
+            var point = new Point(x, y);
+            var color = seed.color || '#FF0000';
+            var scale = seed.scale || 1;
+
+            this.seed = new Seed(this, point, scale, color);
+        },
+
+        initFooter: function() {
+            var footer = this.opt.footer || {};
+            var width = footer.width || this.width;
+            var height = footer.height || 5;
+            var speed = footer.speed || 2;
+            this.footer = new Footer(this, width, height, speed);
+        },
+
+        initBranch: function() {
+            var branchs = this.opt.branch || []
+            this.branchs = [];
+            this.addBranchs(branchs);
+        },
+
+        initBloom: function() {
+            var bloom = this.opt.bloom || {};
+            var cache = [],
+                num = bloom.num || 500,
+                width = bloom.width || this.width,
+                height = bloom.height || this.height,
+                figure = this.seed.heart.figure;
+            var r = 240, x, y;
+            for (var i = 0; i < num; i++) {
+                cache.push(this.createBloom(width, height, r, figure));
+            }
+            this.blooms = [];
+            this.bloomsCache = cache;
+        },
+
+        toDataURL: function(type) {
+            return this.canvas.toDataURL(type);
+        },
+
+        draw: function(k) {
+            var s = this, ctx = s.ctx;
+            var rec = s.record[k];
+            if (!rec) {
+                return ;
+            }
+            var point = rec.point,
+                image = rec.image;
+
+            ctx.save();
+            ctx.putImageData(image, point.x, point.y);
+            ctx.restore();
+        },
+
+        addBranch: function(branch) {
+            this.branchs.push(branch);
+        },
+
+        addBranchs: function(branchs){
+            var s = this, b, p1, p2, p3, r, l, c;
+            for (var i = 0; i < branchs.length; i++) {
+                b = branchs[i];
+                p1 = new Point(b[0], b[1]);
+                p2 = new Point(b[2], b[3]);
+                p3 = new Point(b[4], b[5]);
+                r = b[6];
+                l = b[7];
+                c = b[8]
+                s.addBranch(new Branch(s, p1, p2, p3, r, l, c));
+            }
+        },
+
+        removeBranch: function(branch) {
+            var branchs = this.branchs;
+            for (var i = 0; i < branchs.length; i++) {
+                if (branchs[i] === branch) {
+                    branchs.splice(i, 1);
+                }
+            }
+        },
+
+        canGrow: function() {
+            return !!this.branchs.length;
+        },
+        grow: function() {
+            var branchs = this.branchs;
+            for (var i = 0; i < branchs.length; i++) {
+                var branch = branchs[i];
+                if (branch) {
+                    branch.grow();
+                }
+            }
+        },
+
+        addBloom: function (bloom) {
+            this.blooms.push(bloom);
+        },
+
+        removeBloom: function (bloom) {
+            var blooms = this.blooms;
+            for (var i = 0; i < blooms.length; i++) {
+                if (blooms[i] === bloom) {
+                    blooms.splice(i, 1);
+                }
+            }
+        },
+
+        createBloom: function(width, height, radius, figure, color, alpha, angle, scale, place, speed) {
+            var x, y;
+            while (true) {
+                x = random(20, width - 20);
+                y = random(20, height - 20);
+                if (inheart(x - width / 2, height - (height - 40) / 2 - y, radius)) {
+                    return new Bloom(this, new Point(x, y), figure, color, alpha, angle, scale, place, speed);
+                }
+            }
+        },
+
+        canFlower: function() {
+            return !!this.blooms.length;
+        },
+        flower: function(num) {
+            var s = this, blooms = s.bloomsCache.splice(0, num);
+            for (var i = 0; i < blooms.length; i++) {
+                s.addBloom(blooms[i]);
+            }
+            blooms = s.blooms;
+            for (var j = 0; j < blooms.length; j++) {
+                blooms[j].flower();
+            }
+        },
+
+        snapshot: function(k, x, y, width, height) {
+            var ctx = this.ctx;
+            var image = ctx.getImageData(x, y, width, height);
+            this.record[k] = {
+                image: image,
+                point: new Point(x, y),
+                width: width,
+                height: height
+            }
+        },
+        setSpeed: function(k, speed) {
+            this.record[k || "move"].speed = speed;
+        },
+        move: function(k, x, y) {
+            var s = this, ctx = s.ctx;
+            var rec = s.record[k || "move"];
+            var point = rec.point,
+                image = rec.image,
+                speed = rec.speed || 10,
+                width = rec.width,
+                height = rec.height;
+
+            i = point.x + speed < x ? point.x + speed : x;
+            j = point.y + speed < y ? point.y + speed : y;
+
+            ctx.save();
+            ctx.clearRect(point.x, point.y, width, height);
+            ctx.putImageData(image, i, j);
+            ctx.restore();
+
+            rec.point = new Point(i, j);
+            rec.speed = speed * 0.95;
+
+            if (rec.speed < 2) {
+                rec.speed = 2;
+            }
+            return i < x || j < y;
+        },
+
+        jump: function() {
+            var s = this, blooms = s.blooms;
+            if (blooms.length) {
+                for (var i = 0; i < blooms.length; i++) {
+                    blooms[i].jump();
+                }
+            }
+            if ((blooms.length && blooms.length < 3) || !blooms.length) {
+                var bloom = this.opt.bloom || {},
+                    width = bloom.width || this.width,
+                    height = bloom.height || this.height,
+                    figure = this.seed.heart.figure;
+                var r = 240, x, y;
+                for (var i = 0; i < random(1,2); i++) {
+                    blooms.push(this.createBloom(width / 2 + width, height, r, figure, null, 1, null, 1, new Point(random(-100,600), 720), random(200,300)));
+                }
+            }
+        }
+    }
+
+    Branch = function(tree, point1, point2, point3, radius, length, branchs) {
+        this.tree = tree;
+        this.point1 = point1;
+        this.point2 = point2;
+        this.point3 = point3;
+        this.radius = radius;
+        this.length = length || 100;
+        this.len = 0;
+        this.t = 1 / (this.length - 1);
+        this.branchs = branchs || [];
+    }
+
+    Branch.prototype = {
+        grow: function() {
+            var s = this, p;
+            if (s.len <= s.length) {
+                p = bezier([s.point1, s.point2, s.point3], s.len * s.t);
+                s.draw(p);
+                s.len += 1;
+                s.radius *= 0.97;
+            } else {
+                s.tree.removeBranch(s);
+                s.tree.addBranchs(s.branchs);
+            }
+        },
+        draw: function(p) {
+            var s = this;
+            var ctx = s.tree.ctx;
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = 'rgb(35, 31, 32)';
+            ctx.shadowColor = 'rgb(35, 31, 32)';
+            ctx.shadowBlur = 2;
+            ctx.moveTo(p.x, p.y);
+            ctx.arc(p.x, p.y, s.radius, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    Bloom = function(tree, point, figure, color, alpha, angle, scale, place, speed) {
+        this.tree = tree;
+        this.point = point;
+        this.color = color || 'rgb(255,' + random(0, 255) + ',' + random(0, 255) + ')';
+        this.alpha = alpha || random(0.3, 1);
+        this.angle = angle || random(0, 360);
+        this.scale = scale || 0.1;
+        this.place = place;
+        this.speed = speed;
+
+        this.figure = figure;
+    }
+    Bloom.prototype = {
+        setFigure: function(figure) {
+            this.figure = figure;
+        },
+        flower: function() {
+            var s = this;
+            s.draw();
+            s.scale += 0.1;
+            if (s.scale > 1) {
+                s.tree.removeBloom(s);
+            }
+        },
+        draw: function() {
+            var s = this, ctx = s.tree.ctx, figure = s.figure;
+
+            ctx.save();
+            ctx.fillStyle = s.color;
+            ctx.globalAlpha = s.alpha;
+            ctx.translate(s.point.x, s.point.y);
+            ctx.scale(s.scale, s.scale);
+            ctx.rotate(s.angle);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            for (var i = 0; i < figure.length; i++) {
+                var p = figure.get(i);
+                ctx.lineTo(p.x, -p.y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        },
+        jump: function() {
+            var s = this, height = s.tree.height;
+
+            if (s.point.x < -20 || s.point.y > height + 20) {
+                s.tree.removeBloom(s);
+            } else {
+                s.draw();
+                s.point = s.place.sub(s.point).div(s.speed).add(s.point);
+                s.angle += 0.05;
+                s.speed -= 1;
+            }
+        }
+    }
+
+    window.random = random;
+    window.bezier = bezier;
+    window.Point = Point;
+    window.Tree = Tree;
+
+})(window);
+
+(function(){
+    var $=function(id){
+        return document.getElementById(id);
+    };
+
+    var countdown =$("countdown");
+    var day=$("day");
+    var hour=$('hours');
+    var minute=$("minutes");
+    var second=$("seconds");
+
+    function timeElapse(data){
+        var current =new Date();
+        var seconds = (Date.parse(current) - Date.parse(data)) / 1000;
+        var days = Math.floor(seconds / (3600 * 24));
+        seconds = seconds % (3600 * 24);
+        var hours = Math.floor(seconds / 3600);
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        seconds = seconds % 3600;
+        var minutes = Math.floor(seconds / 60);
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        seconds = seconds % 60;
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        day.innerHTML=days;
+        hour.innerHTML=hours;
+        minute.innerHTML=minutes;
+        second.innerHTML=seconds;
+    }
+
+    var msg=[
+        "潇潇:",
+        "今天是个特殊的日子",
+        "我要向你说出内心里的话",
+        "认识你是我最大的幸运",
+        "你是一个可爱,温柔,甜美,傻傻的女孩",
+        "每次看到你都很心动",
+        "每次知道你加班我也会很心疼",
+        "不要加那么多班了好吗",
+        "工作永远都做不完,我只希望你健康快乐",
+        "记得我们去三圣乡摘梅花",
+        "每一刻每一秒都像电影胶片在我脑海浮现",
+        "这是我们仅有的美好,希望美好越来越多",
+        "我有时候做事可能让你很尴尬,以后我会尊重你的感受",
+        "不去你们公司楼下接你",
+        "不过我真的希望能多见见你",
+        "希望以后的我们能够多了解,多熟悉",
+        "我也不希望给你太多压力",
+        "我怕你会不理我",
+        "我怕一段良缘就此错过",
+        "我喜欢你",
+        "在这峥嵘的岁月你",
+        "我喜欢你",
+        "那个温柔善良的你"
+    ];
+
+    var btn =$("btn");
+    var input=$("input");
+    var canvas=$("canvas");
+    var width = canvas.width;
+    var height = canvas.height;
+    var canvasParent=canvas.parentNode;
+    var login=$("login");
+    var msgDom=$("msg");
+    var scale=document.documentElement.getBoundingClientRect().width/width;
+    canvasParent.style.transform="scale("+scale+","+scale+")";
+
+    var opts = {
+        seed: {
+            x: width / 2 - 20,
+            color: "rgb(190, 26, 37)",
+            scale:1
+        },
+        branch: [
+            [535, 680, 570, 250, 500, 200, 30, 100, [
+                [540, 500, 455, 417, 340, 400, 13, 100, [
+                    [450, 435, 434, 430, 394, 395, 2, 40]
+                ]],
+                [550, 445, 600, 356, 680, 345, 12, 100, [
+                    [578, 400, 648, 409, 661, 426, 3, 80]
+                ]],
+                [539, 281, 537, 248, 534, 217, 3, 40],
+                [546, 397, 413, 247, 328, 244, 9, 80, [
+                    [427, 286, 383, 253, 371, 205, 2, 40],
+                    [498, 345, 435, 315, 395, 330, 4, 60]
+                ]],
+                [546, 357, 608, 252, 678, 221, 6, 100, [
+                    [590, 293, 646, 277, 648, 271, 2, 80]
+                ]]
+            ]]
+        ],
+        bloom: {
+            num: 666,
+            width: 1100,
+            height: 680
+        }
+    };
+
+    var tree = new Tree(canvas, width, height, opts);
+
+    var growAnimate = eval(Jscex.compile("async", function () {
+        do {
+            tree.grow();
+            $await(Jscex.Async.sleep(10));
+        } while (tree.canGrow());
+    }));
+
+    var flowAnimate = eval(Jscex.compile("async", function () {
+        do {
+            tree.flower(2);
+            $await(Jscex.Async.sleep(10));
+        } while (tree.canFlower());
+    }));
+
+    var moveAnimate = eval(Jscex.compile("async", function () {
+        tree.snapshot("p1", 240, 0, 610, 680);
+        while (tree.move("p1", 500, 0)) {
+            $await(Jscex.Async.sleep(10));
+        }
+        // 会有闪烁不得意这样做, (＞﹏＜)
+        canvas.parentNode.style.background='url('+ tree.toDataURL('image/png') + ')';
+        $await(Jscex.Async.sleep(300));
+    }));
+
+    var jumpAnimate = eval(Jscex.compile("async", function () {
+        while (true) {
+            tree.ctx.clearRect(0, 0, width, height);
+            tree.jump();
+            $await(Jscex.Async.sleep(25));
+        }
+    }));
+
+    var textAnimate = eval(Jscex.compile("async", function () {
+        var together = new Date();
+        together.setFullYear(2016, 0, 9);
+        together.setHours(20);
+        together.setMinutes(20);
+        together.setSeconds(0);
+        together.setMilliseconds(0);
+
+        while (true) {
+            timeElapse(together);
+            $await(Jscex.Async.sleep(1000));
+        }
+    }));
+
+    var index =0;
+
+    var topTextAnimate=function(){
+
+        var str =msg[index];
+        if(!str){
+            return false;
+        }
+        var length = str.length;
+        var tId = null;
+        var i=0;
+        var p=document.createElement("p");
+        msgDom.appendChild(p);
+
+        tId=setInterval(function(){
+            var span=document.createElement("span");
+            span.innerHTML=str.charAt(i);
+            p.appendChild(span);
+            if(i++ === length){
+                clearInterval(tId);
+                index ++;
+                setTimeout(topTextAnimate,300);
+            }
+        },150);
+    };
+
+    var runAsync = eval(Jscex.compile("async", function () {
+        $await(growAnimate());
+        $await(flowAnimate());
+        $await(moveAnimate());
+        countdown.classList.add("show");
+        textAnimate().start();
+        topTextAnimate();
+        $await(jumpAnimate());
+    }));
+
+
+    btn.addEventListener("click",function(){
+        if(!/15884514853/.test(input.value)){
+            alert("请输入正确的手机号码啊！");
+        }else{
+            login.classList.add("out");
+            setTimeout(function(){
+                runAsync().start();
+            },1000);
+        }
+    });
+})();

@@ -705,7 +705,6 @@
                 clearInterval(tId);
                 index ++;
                 setTimeout(topTextAnimate,300);
-                //topTextAnimate()
             }
         },150);
     };

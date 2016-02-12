@@ -4,6 +4,7 @@
 var jsSrc="public/js/";
 
 module.exports = function(grunt) {
+    grunt.file.defaultEncoding = 'utf-8';
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         concat: {
@@ -22,11 +23,14 @@ module.exports = function(grunt) {
         },
         uglify:{
             dist:{
+                options: {
+                    mangle: false, //不混淆变量名
+                    preserveComments: false, //不删除注释，还可以为 false（删除全部注释），some（保留@preserve @license @cc_on等注释）
+                    //footer:'\n/*! <%= pkg.name %> 最后修改于： <%= grunt.template.today("yyyy-mm-dd") %> */'//添加footer
+                },
                 files:{
-                    //"dist/js/run.js":["public/js/run.js"],
-                    "dist/js/love.js":["public/js/love.js"],
-                    "public/js/jscex-jit.min.js":["public/js/jscex-jit.js"],
-                    "public/js/jscex-parser.min.js":["public/js/jscex-parser.js"]
+                    "dist/js/run.js":["public/js/run.js"],
+                    "dist/js/love.js":["public/js/love.js"]
                 }
             }
         },
