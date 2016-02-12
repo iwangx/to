@@ -10,8 +10,8 @@ module.exports = function(grunt) {
             dev:{
                 src: [
                     jsSrc +'jscex.min.js',
-                    jsSrc +'jscex-parser.js',
-                    jsSrc +'jscex-jit.js',
+                    jsSrc +'jscex-parser.min.js',
+                    jsSrc +'jscex-jit.min.js',
                     jsSrc +'jscex-builderbase.min.js',
                     jsSrc +'jscex-async.min.js',
                     jsSrc +'jscex-async-powerpack.min.js'
@@ -23,8 +23,10 @@ module.exports = function(grunt) {
         uglify:{
             dist:{
                 files:{
-                    "dist/js/run.js":["public/js/run.js"],
-                    "dist/js/love.js":["public/js/love.js"]
+                    //"dist/js/run.js":["public/js/run.js"],
+                    "dist/js/love.js":["public/js/love.js"],
+                    "public/js/jscex-jit.min.js":["public/js/jscex-jit.js"],
+                    "public/js/jscex-parser.min.js":["public/js/jscex-parser.js"]
                 }
             }
         },
