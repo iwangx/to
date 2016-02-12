@@ -604,17 +604,6 @@
     var scale=document.documentElement.getBoundingClientRect().width/width;
     canvasParent.style.transform="scale("+scale+","+scale+")";
 
-    btn.addEventListener("click",function(){
-        if(!/15884514853/.test(input.value)){
-            alert("请输入正确的手机号码啊！");
-        }else{
-            login.classList.add("out");
-            setTimeout(function(){
-                runAsync().start();
-            },1000);
-        }
-    });
-
     var opts = {
         seed: {
             x: width / 2 - 20,
@@ -730,4 +719,16 @@
         topTextAnimate();
         $await(jumpAnimate());
     }));
+
+
+    btn.addEventListener("click",function(){
+        if(!/15884514853/.test(input.value)){
+            alert("请输入正确的手机号码啊！");
+        }else{
+            login.classList.add("out");
+            setTimeout(function(){
+                runAsync().start();
+            },1000);
+        }
+    });
 })();
