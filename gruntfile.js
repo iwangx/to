@@ -29,8 +29,8 @@ module.exports = function(grunt) {
                     //footer:'\n/*! <%= pkg.name %> 最后修改于： <%= grunt.template.today("yyyy-mm-dd") %> */'//添加footer
                 },
                 files:{
-                    "dist/js/run.js":["public/js/run.js"],
-                    "dist/js/love.js":["public/js/love.js"]
+                    "dist/js/run.js":["public/js/run.js"]
+                    //"dist/js/love.js":["public/js/love.js"]
                 }
             }
         },
