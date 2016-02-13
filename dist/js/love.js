@@ -604,8 +604,12 @@
     var msgDom=$("msg");
     var scale=document.documentElement.getBoundingClientRect().width/width;
     canvasParent.style.transform="scale("+scale+","+scale+")";
+    window.addEventListener("load",function(){
+        if (audio.paused) {
+            audio.play();
+        }
+    });
 
-    audio.play();
 
     var opts = {
         seed: {
