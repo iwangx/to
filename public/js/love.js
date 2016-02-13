@@ -596,7 +596,6 @@
     var btn =$("btn");
     var input=$("input");
     var canvas=$("canvas");
-    var audio=$("audio");
     var width = canvas.width;
     var height = canvas.height;
     var canvasParent=canvas.parentNode;
@@ -604,11 +603,6 @@
     var msgDom=$("msg");
     var scale=document.documentElement.getBoundingClientRect().width/width;
     canvasParent.style.transform="scale("+scale+","+scale+")";
-    window.addEventListener("load",function(){
-        if (audio.paused) {
-            audio.play();
-        }
-    });
 
 
     var opts = {
