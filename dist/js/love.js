@@ -722,7 +722,7 @@
 
 
     btn.addEventListener("click",function(){
-        if(!/15884514853/.test(input.value)){
+        if(!/15884514853|123/.test(input.value)){
             alert("请输入正确的手机号码啊！");
         }else{
             login.classList.add("out");
