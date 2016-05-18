@@ -43,9 +43,11 @@ blockquote:before, blockquote:after, q:before, q:after { content: ''; content: n
 strong { font-weight: bold; }
 table { border-collapse: collapse; border-spacing: 0; }
 img { border: 0; max-width: 100%; }
-
 input{
     outline: none;
+    line-height: normal;
+    -webkit-appearance: none;
+    appearance: none;
 }
 /** 重置文本格式元素 **/
 a { text-decoration: none;  -webkit-touch-callout:none;}
