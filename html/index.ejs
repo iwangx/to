@@ -10,8 +10,15 @@
     <title>这是一个神秘的网站</title>
     <script>
         (function(){
-           var ua = navigator.userAgent.toLowerCase();
-            if(ua.match(/MicroMessenger/i) != 'micromessenger'){
+            var isOut=(function (){
+                if (/iPhone|iPad|iPod|Macintosh/i.test(navigator.userAgent)) return false;
+                if (/Chrome/i.test(navigator.userAgent)) return (/Android/i.test(navigator.userAgent));
+                if (/Silk/i.test(navigator.userAgent)) return false;
+                if (/UCBrowser/i.test(navigator.userAgent)) return false;
+                if (/Android/i.test(navigator.userAgent))  return false;
+                return true;
+            })();
+            if(isOut){
                location.href="/error?href="+location.origin;
             }
         })();
